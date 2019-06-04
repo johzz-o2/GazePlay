@@ -225,12 +225,16 @@ public class Stats implements GazeMotionListener {
         File todayDirectory = getGameStatsOfTheDayDirectory();
         final String heatmapFilePrefix = Utils.now() + "-heatmap";
         final String fixationSequenceFilePrefix = Utils.now() + "-fixationSequence";
+        final String fixSeqWithoutVRPrefix = Utils.now() + "-withoutVR";
+        final String fixSeqTrigo = Utils.now() + "-trigonometry";
         final String screenshotPrefix = Utils.now() + "-screenshot";
 
         File heatMapPngFile = new File(todayDirectory, heatmapFilePrefix + ".png");
         File heatMapCsvFile = new File(todayDirectory, heatmapFilePrefix + ".csv");
 
         File fixationSequencePngFile = new File(todayDirectory, fixationSequenceFilePrefix + ".png");
+        File fixationSeqPngFile1 = new File(todayDirectory, fixSeqWithoutVRPrefix + ".png");
+        File fixationSeqPngFile2 = new File(todayDirectory, fixSeqTrigo + ".png");
 
         File screenshotFile = new File(todayDirectory, screenshotPrefix + ".png");
         BufferedImage bImage = SwingFXUtils.fromFXImage(gameScreenShot, null);
@@ -241,7 +245,7 @@ public class Stats implements GazeMotionListener {
         }
 
         SavedStatsInfo savedStatsInfo = new SavedStatsInfo(heatMapPngFile, heatMapCsvFile, screenshotFile,
-                fixationSequencePngFile);
+                fixationSequencePngFile, fixationSeqPngFile1, fixationSeqPngFile2);
 
         this.savedStatsInfo = savedStatsInfo;
         if (this.heatMap != null) {
@@ -250,7 +254,10 @@ public class Stats implements GazeMotionListener {
         }
 
         if (this.fixationSequence != null) {
-            saveFixationSequenceAsPng(fixationSequencePngFile);
+            saveFixationSequenceAsPng(fixationSequencePngFile, 1); // final output
+            saveFixationSequenceAsPng(fixationSeqPngFile1, 2); // without VR
+            saveFixationSequenceAsPng(fixationSeqPngFile2, 3); // trigo
+
         }
         savedStatsInfo.notifyFilesReady();
         return savedStatsInfo;
@@ -391,7 +398,7 @@ public class Stats implements GazeMotionListener {
         }
     }
 
-    private void saveFixationSequenceAsPng(File outputPngFile) {
+    private void saveFixationSequenceAsPng(File outputPngFile, int type) { // type 1 , 2 or 3
 
         // log.info(String.format("Fixation-Sequence size: %3d X %3d",
         // (int) (gameContextScene.getWidth() / heatMapPixelSize),
@@ -399,8 +406,17 @@ public class Stats implements GazeMotionListener {
 
         // FixationSequence sequence = new FixationSequence((int) (gameContextScene.getWidth() / heatMapPixelSize),
         // (int) (gameContextScene.getHeight() / heatMapPixelSize), fixationSequence);
-        FixationSequence sequence = new FixationSequence((int) gameContextScene.getWidth(),
-                (int) gameContextScene.getHeight(), fixationSequence);
+        FixationSequence sequence;
+        if (type == 1) { // with VR
+            sequence = new FixationSequence((int) gameContextScene.getWidth(), (int) gameContextScene.getHeight(),
+                    fixationSequence);
+        } else if (type == 2) { // trigonometry approach
+            sequence = new FixationSequence((int) gameContextScene.getWidth(), (int) gameContextScene.getHeight(),
+                    fixationSequence, true);
+        } else // without VR
+            sequence = new FixationSequence((int) gameContextScene.getWidth(), (int) gameContextScene.getHeight(),
+                    fixationSequence, false);
+        ;
         try {
             sequence.saveToFile(outputPngFile);
         } catch (Exception e) {
