@@ -44,7 +44,7 @@ public class FixationSequence {
         gc.setStroke(Color.rgb(255, 157, 6, 1));
         gc.setLineWidth(4);
 
-        fixSeq = vertexReduction(fixSeq, 15);
+        fixSeq = vertexReduction(fixSeq, 25);
 
         for (int i = 0; i < fixSeq.size() - 1; i++) {
             gc.strokeLine(fixSeq.get(i).getY(), fixSeq.get(i).getX(), fixSeq.get(i + 1).getY(),
@@ -173,7 +173,7 @@ public class FixationSequence {
                         Math.abs(fixSeq.get(j).getGazeDuration() / 10)
                         + Math.abs(fixSeq.get(j - 1).getGazeDuration()) / 10); // radius depends on time spent on a
                                                                                // position .
-                log.info("radius = {}", radius);
+                //log.info("radius = {}", radius);
 
                 if (theta_tolerance > Math.PI / 9) {
                     label_count++;
@@ -207,7 +207,7 @@ public class FixationSequence {
             for (int i = 0; i < fixSeq.size() - 1; i++) {
                 gc.strokeLine(fixSeq.get(i).getY(), fixSeq.get(i).getX(), fixSeq.get(i + 1).getY(),
                         fixSeq.get(i + 1).getX());
-                log.info("Point nb :" + i + ", firstGaze = " + fixSeq.get(i).getFirstGaze() + ", gazeDuration = "
+                log.info("--Point nb :" + i + ", firstGaze = " + fixSeq.get(i).getFirstGaze() + ", gazeDuration = "
                         + fixSeq.get(i).getGazeDuration() + ", x = " + fixSeq.get(i).getY() + " , y = "
                         + fixSeq.get(i).getX());
             }
@@ -263,7 +263,6 @@ public class FixationSequence {
         }
 
     }
-    // method for only saccade threshold
 
     /**
      * Saves the fixation Sequence to a PNG file

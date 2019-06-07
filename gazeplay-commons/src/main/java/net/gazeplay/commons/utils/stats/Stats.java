@@ -448,7 +448,8 @@ public class Stats implements GazeMotionListener {
         if (fixationSequence.size() > 1
                 && (newGazePoint.getX() == fixationSequence.get(fixationSequence.size() - 1).getX())
                 && (newGazePoint.getY() == fixationSequence.get(fixationSequence.size() - 1).getY())) {
-            fixationSequence.get(fixationSequence.size() - 1).setGazeDuration(gazeDuration);
+            long dur = fixationSequence.get(fixationSequence.size()-1).getGazeDuration();
+            fixationSequence.get(fixationSequence.size() - 1).setGazeDuration(gazeDuration+dur);
         } else { // else add the new point in the list
             newGazePoint.setGazeDuration(gazeDuration);
             fixationSequence.add(newGazePoint);
